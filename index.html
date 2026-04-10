@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coming Soon</title>
+  <style>
+.logo-img {
+  width: 5000px;
+  height: auto;
+  display: block;
+  margin: 20px auto;
+}
+
+.open-logo-img {
+  width: 5000px;
+  height: auto;
+  display: block;
+  margin: 20px auto;
+}
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    #screen-countdown {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      width: 100%; opacity: 1; transition: opacity 0.8s ease;
+    }
+    #screen-countdown.fade-out { opacity: 0; pointer-events: none; }
+
+    .logo-placeholder {
+      width: 120px; height: 120px;
+      border: 2px dashed #cccccc; border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      color: #aaaaaa; font-size: 13px; text-align: center;
+      line-height: 1.4; padding: 8px; margin-bottom: 48px;
+    }
+    .logo-img { width: 120px; height: 120px; object-fit: contain; display: block; margin-bottom: 48px; }
+
+    .coming-soon {
+      font-size: clamp(28px, 5vw, 52px); font-weight: 700;
+      letter-spacing: 0.15em; color: #111111;
+      text-transform: uppercase; margin-bottom: 8px;
+    }
+    .target-date {
+      font-size: clamp(14px, 2.5vw, 20px); font-weight: 400;
+      letter-spacing: 0.1em; color: #888888; margin-bottom: 56px;
+    }
+
+    .countdown-row { display: flex; align-items: center; gap: clamp(8px,2vw,24px); }
+    .unit-block { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .digits-wrap { display: flex; gap: 3px; }
+    .unit-label { font-size: clamp(9px,1.2vw,12px); letter-spacing:.14em; color:#aaaaaa; text-transform:uppercase; font-weight:500; }
+    .sep { font-size: clamp(28px,4vw,56px); font-weight:300; color:#cccccc; line-height:1; margin-bottom:22px; }
+
+    .flip-card {
+      --w: clamp(44px,7vw,76px); --h: clamp(62px,10vw,102px);
+      --fs: clamp(28px,4.8vw,62px);
+      --bg-top: #222222; --bg-bot: #1a1a1a; --fg: #ffffff;
+      --half: calc(var(--h) / 2 - 1px);
+      width: var(--w); height: var(--h); position: relative; perspective: 600px;
+    }
+    .flip-card .upper { position:absolute; left:0; right:0; top:0; height:var(--half); background:var(--bg-top); border-radius:8px 8px 0 0; overflow:hidden; display:flex; align-items:flex-end; justify-content:center; }
+    .flip-card .upper span { font-size:var(--fs); font-weight:700; color:var(--fg); font-variant-numeric:tabular-nums; line-height:1; transform:translateY(50%); display:block; }
+    .flip-card .lower { position:absolute; left:0; right:0; bottom:0; height:var(--half); background:var(--bg-bot); border-radius:0 0 8px 8px; overflow:hidden; display:flex; align-items:flex-start; justify-content:center; }
+    .flip-card .lower span { font-size:var(--fs); font-weight:700; color:var(--fg); font-variant-numeric:tabular-nums; line-height:1; transform:translateY(-50%); display:block; }
+    .flip-card .divider { position:absolute; left:0; right:0; top:calc(50% - 1px); height:2px; background:rgba(0,0,0,.5); z-index:5; }
+    .flip-card .ff { position:absolute; left:0; right:0; top:0; height:var(--half); background:var(--bg-top); border-radius:8px 8px 0 0; overflow:hidden; display:flex; align-items:flex-end; justify-content:center; transform-origin:bottom center; transform:rotateX(0deg); z-index:10; }
+    .flip-card .ff span { font-size:var(--fs); font-weight:700; color:var(--fg); font-variant-numeric:tabular-nums; line-height:1; transform:translateY(50%); display:block; }
+    .flip-card .fb { position:absolute; left:0; right:0; bottom:0; height:var(--half); background:var(--bg-bot); border-radius:0 0 8px 8px; overflow:hidden; display:flex; align-items:flex-start; justify-content:center; transform-origin:top center; transform:rotateX(-90deg); z-index:10; }
+    .flip-card .fb span { font-size:var(--fs); font-weight:700; color:var(--fg); font-variant-numeric:tabular-nums; line-height:1; transform:translateY(-50%); display:block; }
+    @keyframes flapDown { 0%{transform:rotateX(0deg)} 100%{transform:rotateX(-90deg)} }
+    @keyframes flapUp   { 0%{transform:rotateX(-90deg)} 100%{transform:rotateX(0deg)} }
+    .flip-card .ff.go { animation: flapDown .25s ease-in forwards; }
+    .flip-card .fb.go { animation: flapUp   .25s ease-out .22s forwards; }
+
+    /* ── SCREEN B ── */
+    #screen-open {
+      display: none; flex-direction: column; align-items: center;
+      justify-content: center; width: 100%;
+      opacity: 0; transition: opacity 0.8s ease;
+    }
+    #screen-open.visible { opacity: 1; }
+
+    .open-logo-placeholder {
+      width: 180px; height: 180px; border: 2px dashed #cccccc;
+      border-radius: 20px; display: flex; align-items: center;
+      justify-content: center; color: #aaaaaa; font-size: 13px;
+      text-align: center; line-height: 1.6; padding: 12px;
+      margin-bottom: 36px;
+    }
+    .open-logo-img { width: 180px; height: 180px; object-fit: contain; display: block; margin-bottom: 36px; }
+
+    .open-labels { display: flex; align-items: baseline; gap: 16px; margin-bottom: 12px; }
+    .char-main { font-size: clamp(36px,8vw,80px); font-weight:700; color:#111111; letter-spacing:.05em; line-height:1; }
+
+    .open-hint { font-size: clamp(11px,1.8vw,14px); color:#bbbbbb; font-weight:400; letter-spacing:.02em; margin-bottom: 36px; text-align:center; }
+
+    /* 인증코드 박스 */
+    .code-box {
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      padding: 20px 48px;
+      border: 1px solid #eeeeee;
+      border-radius: 20px;
+      background: #fafafa;
+      margin-bottom: 12px;
+    }
+    .code-label { font-size: 11px; letter-spacing:.12em; color:#bbbbbb; text-transform:uppercase; font-weight:500; }
+    .code-value {
+      font-size: clamp(22px,4vw,36px); font-weight:700; color:#111111;
+      letter-spacing: 0.12em; font-variant-numeric: tabular-nums;
+    }
+    .code-order { font-size: 13px; color:#aaaaaa; font-weight:400; }
+
+    /* 로딩 스피너 */
+    .spinner {
+      width: 20px; height: 20px;
+      border: 2px solid #eeeeee;
+      border-top-color: #111111;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      margin: 8px 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @keyframes riseUp { 0%{opacity:0;transform:translateY(24px)} 100%{opacity:1;transform:translateY(0)} }
+    .open-logo-placeholder, .open-logo-img { animation: riseUp .7s ease forwards; }
+    .open-labels  { animation: riseUp .7s ease .15s both; }
+    .open-hint    { animation: riseUp .7s ease .25s both; }
+    .code-box     { animation: riseUp .7s ease .35s both; }
+  </style>
+</head>
+<body>
+
+<!-- ══ SCREEN A: 카운트다운 ══ -->
+<div id="screen-countdown">
+  <!-- ★ 카운트다운 로고: logo.png 같은 폴더에 넣고 아래 img 주석 해제 -->
+  <img class="logo-img" src="bimaranglogo.png" alt="Logo">
+  <!-- <div class="logo-placeholder">카운트다운<br>로고 삽입</div> -->
+
+  <div class="coming-soon">Coming Soon</div>
+  <div class="target-date">26.04.14</div>
+  <div class="countdown-row" id="countdown-row"></div>
+</div>
+
+<!-- ══ SCREEN B: 오픈 화면 ══ -->
+<div id="screen-open">
+  <!-- ★ 오픈 로고: open-logo.png 같은 폴더에 넣고 아래 img 주석 해제 -->
+  <img class="open-logo-img" src="bimaranglogo.png" alt="Logo">
+ <!-- <div class="open-logo-placeholder">오픈 화면<br>로고 삽입</div> -->
+
+  <div class="open-labels">
+    <span class="char-main">화</span>
+    <span class="char-main">3</span>
+  </div>
+
+  <div class="open-hint">화면을 캡쳐하고 다른 글자도 모아봐요!</div>
+
+  <div class="code-box">
+    <div class="code-label">나만의 인증코드</div>
+    <div class="spinner" id="spinner"></div>
+    <div class="code-value" id="code-value" style="display:none"></div>
+    <div class="code-order" id="code-order" style="display:none"></div>
+  </div>
+</div>
+
+<script>
+  // ══════════════════════════════════════════════════════
+  //  ★★ 여기만 바꾸면 됩니다 ★★
+  //  Apps Script 배포 후 받은 URL 붙여넣기
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwPXCoJoqJjiATb9f-by4J_0xoRf2MkbhPxteuX_yTszYoraWT727MV4--qaWxkSBevXg/exec";
+  //
+  //  이 사이트 식별자 (건드리지 마세요)
+  const SITE_KEY   = "hwa";
+  //
+  //  타겟: 2026년 4월 14일 오전 10:00 KST
+  const TARGET     = new Date('2026-04-10T22:30:00+09:00').getTime();
+  // ══════════════════════════════════════════════════════
+
+  // 랜덤 코드 생성 (8자리, 사이트 식별자 포함)
+  function genCode() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let r = '';
+    for (let i = 0; i < 6; i++) r += chars[Math.floor(Math.random() * chars.length)];
+    return 'HWA-' + r;
+  }
+
+  // localStorage로 재접속 시 동일 코드 유지
+  function getOrCreateCode() {
+    const key = 'code_' + SITE_KEY;
+    let code = localStorage.getItem(key);
+    if (!code) {
+      code = genCode();
+      localStorage.setItem(key, code);
+    }
+    return code;
+  }
+
+  // Sheets에 등록 & 순번 받기
+  async function registerCode(code) {
+    if (SCRIPT_URL === "YOUR_APPS_SCRIPT_URL_HERE") {
+      document.getElementById('spinner').style.display = 'none';
+      document.getElementById('code-value').textContent = code;
+      document.getElementById('code-value').style.display = 'block';
+      document.getElementById('code-order').textContent = '(설정 후 순번 표시)';
+      document.getElementById('code-order').style.display = 'block';
+      return;
+    }
+    try {
+      const url = `${SCRIPT_URL}?action=register&site=${SITE_KEY}&code=${code}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      document.getElementById('spinner').style.display = 'none';
+      document.getElementById('code-value').textContent = code;
+      document.getElementById('code-value').style.display = 'block';
+      if (data.status === 'ok') {
+        const suffix = data.duplicate ? ' (재접속)' : '';
+        document.getElementById('code-order').textContent = `이 사이트 ${data.order}번째 방문자${suffix}`;
+        document.getElementById('code-order').style.display = 'block';
+      }
+    } catch(e) {
+      document.getElementById('spinner').style.display = 'none';
+      document.getElementById('code-value').textContent = code;
+      document.getElementById('code-value').style.display = 'block';
+      document.getElementById('code-order').textContent = '순번 불러오기 실패';
+      document.getElementById('code-order').style.display = 'block';
+    }
+  }
+
+  // 화면 전환
+  let expired = false;
+  function showOpenScreen() {
+    const a = document.getElementById('screen-countdown');
+    const b = document.getElementById('screen-open');
+    a.classList.add('fade-out');
+    setTimeout(() => {
+      a.style.display = 'none';
+      b.style.display = 'flex';
+      requestAnimationFrame(() => requestAnimationFrame(() => b.classList.add('visible')));
+      const code = getOrCreateCode();
+      registerCode(code);
+    }, 800);
+  }
+
+  // Flip card
+  function makeCard(id) {
+    const c = document.createElement('div'); c.className = 'flip-card';
+    c.innerHTML =
+      `<div class="upper"><span id="${id}-u">0</span></div>` +
+      `<div class="lower"><span id="${id}-l">0</span></div>` +
+      `<div class="divider"></div>` +
+      `<div class="ff" id="${id}-ff"><span id="${id}-fft">0</span></div>` +
+      `<div class="fb" id="${id}-fb"><span id="${id}-fbt">0</span></div>`;
+    return c;
+  }
+  function makeUnit(ids, label) {
+    const b = document.createElement('div'); b.className = 'unit-block';
+    const w = document.createElement('div'); w.className = 'digits-wrap';
+    ids.forEach(id => w.appendChild(makeCard(id)));
+    const l = document.createElement('div'); l.className = 'unit-label'; l.textContent = label;
+    b.appendChild(w); b.appendChild(l); return b;
+  }
+  function makeSep() { const s = document.createElement('div'); s.className = 'sep'; s.textContent = ':'; return s; }
+
+  const row = document.getElementById('countdown-row');
+  row.appendChild(makeUnit(['d0','d1','d2'], 'Days'));
+  row.appendChild(makeSep());
+  row.appendChild(makeUnit(['h0','h1'], 'Hours'));
+  row.appendChild(makeSep());
+  row.appendChild(makeUnit(['m0','m1'], 'Minutes'));
+  row.appendChild(makeSep());
+  row.appendChild(makeUnit(['s0','s1'], 'Seconds'));
+
+  const prevVal = {};
+  function flip(id, newCh) {
+    if (prevVal[id] === newCh) return;
+    const oldCh = prevVal[id] ?? newCh; prevVal[id] = newCh;
+    document.getElementById(id+'-u').textContent = newCh;
+    document.getElementById(id+'-l').textContent = newCh;
+    document.getElementById(id+'-fft').textContent = oldCh;
+    document.getElementById(id+'-fbt').textContent = newCh;
+    const ff = document.getElementById(id+'-ff');
+    const fb = document.getElementById(id+'-fb');
+    ff.classList.remove('go'); fb.classList.remove('go');
+    void ff.offsetWidth;
+    ff.classList.add('go'); fb.classList.add('go');
+  }
+  function pad(n,len) { return String(n).padStart(len,'0'); }
+
+  function tick() {
+    const diff = TARGET - Date.now();
+    if (diff <= 0 && !expired) { expired = true; showOpenScreen(); return; }
+    if (expired) return;
+    const sec = Math.floor(diff/1000);
+    const d = pad(Math.floor(sec/86400),3);
+    const h = pad(Math.floor((sec%86400)/3600),2);
+    const m = pad(Math.floor((sec%3600)/60),2);
+    const s = pad(sec%60,2);
+    flip('d0',d[0]); flip('d1',d[1]); flip('d2',d[2]);
+    flip('h0',h[0]); flip('h1',h[1]);
+    flip('m0',m[0]); flip('m1',m[1]);
+    flip('s0',s[0]); flip('s1',s[1]);
+  }
+  tick();
+  setInterval(tick, 1000);
+</script>
+</body>
+</html>
